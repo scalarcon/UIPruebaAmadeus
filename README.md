@@ -1,2 +1,1 @@
-# UIPruebaAmadeus
-App Angular
+# IUPrueba

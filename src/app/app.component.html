@@ -1,8 +1,8 @@
 <div class="container vh-100 d-flex justify-content-center align-items-center" *ngIf="!validateSession()">
   <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
     <div class="card-body">
-      <h4 class="card-title text-center mb-4">Ingreso de Trabajadores</h4>
-      
+      <h4 class="card-title text-center mb-4">Ingreso</h4>
+
       <form [formGroup]="formUser">
         <div class="mb-3">
           <label for="email" class="form-label">Correo Electrónico</label>
@@ -20,7 +20,7 @@
         <div class="text-center mt-3">
           <a href="#" data-bs-toggle="modal" data-bs-target="#registroModal">¿Nuevo usuario? Regístrate</a>
         </div>
-        
+
       </form>
     </div>
   </div>
@@ -40,20 +40,21 @@
         <div class="modal-body">
           <div class="mb-3">
             <label for="emailRegistro" class="form-label">Correo</label>
-            <input type="email" id="emailRegistro"  formControlName="Email" class="form-control" formControlName="Email">
+            <input type="email" id="emailRegistro" formControlName="Email" class="form-control" formControlName="Email">
           </div>
           <div class="mb-3">
             <label for="passwordRegistro" class="form-label">Contraseña</label>
-            <input type="password"  formControlName="Password"  id="passwordRegistro" class="form-control" formControlName="Password">
+            <input type="password" formControlName="Password" id="passwordRegistro" class="form-control"
+              formControlName="Password">
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-success" (click)="createUser()">
+          <button type="button" class="btn btn-success" [disabled]="formUser.invalid" (click)="createUser()">
             Registrarse
           </button>
         </div>
-        </form>
+      </form>
     </div>
   </div>
 </div>
@@ -61,9 +62,9 @@
 
 <div class="container mt-5" *ngIf="validateSession()">
   <!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createEmployeeModal">
-  Crear Trabajador
-</button>
+  <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createEmployeeModal">
+    Crear Trabajador
+  </button>
   <h3 class="mb-4">Lista de Trabajadores</h3>
   <table class="table table-bordered table-hover table-striped text-center align-middle">
     <thead class="table-dark">
@@ -93,35 +94,38 @@
     </tbody>
   </table>
 </div>
-<a href="#" data-bs-toggle="modal" data-bs-target="#editEmployeeModal" id="btnOpenEditModal" style="display: none;">modale edit</a>
+<a href="#" data-bs-toggle="modal" data-bs-target="#editEmployeeModal" id="btnOpenEditModal"
+  style="display: none;">modale edit</a>
 
-<div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+<div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editEmployeeModalLabel">Editar Trabajador</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" id="btnOpenEditModalClose"></button>
-        </div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="editEmployeeModalLabel">Editar Trabajador</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"
+          id="btnOpenEditModalClose"></button>
+      </div>
+      <form [formGroup]="formEmployee" (ngSubmit)="saveEdit()">
         <div class="modal-body">
-          <form [formGroup]="formEmployee">
-            <div class="mb-3">
-              <label for="name" class="form-label">Nombre</label>
-              <input type="text" id="name" class="form-control" formControlName="Name" [value]="this.employeeEdit.name">
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Correo</label>
-              <input type="email" id="email" class="form-control" formControlName="Email" [value]="this.employeeEdit.email">
-            </div>
-            <div class="mb-3">
-              <label for="phone" class="form-label">Teléfono</label>
-              <input type="text" id="phone" class="form-control" formControlName="PhoneNumber" [value]="this.employeeEdit.phoneNumber">
-            </div>          </form>
-          
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" id="name" class="form-control" formControlName="Name">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo</label>
+            <input type="email" id="email" class="form-control" formControlName="Email">
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Teléfono</label>
+            <input type="number" id="phone" class="form-control" formControlName="PhoneNumber">
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary" (click)="saveEdit()" >Guardar Cambios</button>
+          <button type="submit" class="btn btn-primary" [disabled]="formEmployee.invalid">Guardar Cambios</button>
         </div>
+      </form>
     </div>
   </div>
 </div>
@@ -132,15 +136,16 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="createEmployeeModal" tabindex="-1" aria-labelledby="createEmployeeModalLabel" aria-hidden="true">
+<div class="modal fade" id="createEmployeeModal" tabindex="-1" aria-labelledby="createEmployeeModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-    
+
       <div class="modal-header">
         <h5 class="modal-title" id="createEmployeeModalLabel">Registrar Nuevo Trabajador</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      
+
       <div class="modal-body">
         <form [formGroup]="formEmployee">
           <div class="mb-3">
@@ -153,18 +158,18 @@
           </div>
           <div class="mb-3">
             <label for="createPhone" class="form-label">Teléfono</label>
-            <input type="text" id="createPhone" class="form-control" formControlName="PhoneNumber" />
+            <input type="number" id="createPhone" class="form-control" formControlName="PhoneNumber" />
           </div>
         </form>
       </div>
-      
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" (click)="createEmployee()" [disabled]="formEmployee.invalid">
           Guardar
         </button>
       </div>
-    
+
     </div>
   </div>
 </div>

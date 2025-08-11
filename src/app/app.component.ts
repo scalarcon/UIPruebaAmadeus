@@ -16,17 +16,8 @@ export class AppComponent implements OnInit {
   employees?: Employee[];
   formUser: FormGroup;
   formEmployee: FormGroup;
-  employeeEdit: Employee = {
-    id: 0,
-    email: '',
-    isactive: false,
-    phoneNumber: '',
-    name: '',
-    dateCreated: ''
-  };
   isOpenEdit = false
   idEdit = 0
-
 
   constructor(private _userService: UserService, private _fbUser: FormBuilder,
     private _employeeService: EmployeeService, private _fbEmployee: FormBuilder) {
@@ -57,7 +48,7 @@ export class AppComponent implements OnInit {
         if (data.isSuccess === true) {
           localStorage.setItem('jwt', data.token)
           alert('Inicio sesión');
-            this.loadEmploye();
+          this.loadEmploye();
         } else {
           alert('Credenciales no validas');
         }
@@ -79,21 +70,20 @@ export class AppComponent implements OnInit {
   }
 
   editEmployed(Employee: Employee) {
-    debugger
     const btn = document.getElementById('btnOpenEditModal');
     if (btn) {
       btn.click();
     }
 
     this.idEdit = Employee.id
-    this.formEmployee.value.PhoneNumber = Employee.phoneNumber
-    this.formEmployee.value.Email = Employee.email
-    this.formEmployee.value.Name = Employee.name
-    this.employeeEdit = Employee
-
-
-
+    this.formEmployee.patchValue(
+      {
+        Name: Employee.name,
+        Email: Employee.email,
+        PhoneNumber: Employee.phoneNumber
+      });
   }
+
   deleteEmployed(Employee: Employee) {
     this._employeeService.deleteEmployed(Employee.id).subscribe({
       next: (data: any) => {
@@ -110,7 +100,8 @@ export class AppComponent implements OnInit {
   }
 
   saveEdit() {
-    this.formEmployee.value.Id = this.idEdit
+    this.formEmployee.value.Id = this.idEdit;
+    this.formEmployee.value.PhoneNumber = String(this.formEmployee.value.PhoneNumber);
     this._employeeService.editEmployed(this.formEmployee.value).subscribe({
       next: (data: any) => {
         if (data.isSuccess === true) {
@@ -125,11 +116,9 @@ export class AppComponent implements OnInit {
     this.isOpenEdit = false;
   }
 
-  loadEmploye(){
-
+  loadEmploye() {
     this._employeeService.getEmployees().subscribe({
       next: (data2: any) => {
-        debugger;
         if (data2.value.length > 0) {
           this.employees = data2.value;
         }
@@ -137,40 +126,53 @@ export class AppComponent implements OnInit {
     });
   }
 
-  createEmployee(){
+  createEmployee() {
     if (this.formEmployee.valid) {
+      this.formEmployee.value.PhoneNumber = String(this.formEmployee.value.PhoneNumber);
       this._employeeService.createEmployee(this.formEmployee.value).subscribe({
         next: (data: any) => {
           if (data.isSuccess === true) {
             this.loadEmploye();
             alert('Agregado correctamente');
           }
+
+          this.formEmployee.patchValue({
+            Name: "",
+            Email: "",
+            PhoneNumber: ""
+          })
         }
       });
+
+
     }
   }
-  
-  createUser(){
-    debugger
+
+  createUser() {
     const request: User = {
       Email: this.formUser.value.Email,
       Password: this.formUser.value.Password,
     };
 
-      this._userService.createUser(request).subscribe({
-        next: (data: any) => {
-          if (data.isSuccess === true) {
-            alert('Agregado correctamente');
-          } else {
+    this._userService.createUser(request).subscribe({
+      next: (data: any) => {
+        if (data.isSuccess === true) {
+          alert('Agregado correctamente');
+        } else {
 
-            if (data.mensaje) {
-              alert(data.mensaje)
-              
-            }
+          if (data.mensaje) {
+            alert(data.mensaje)
+
           }
         }
-      });
-    
+
+        this.formUser.patchValue({
+          Email: "",
+          Password: ""
+        })
+      }
+    });
+
   }
 
 }
